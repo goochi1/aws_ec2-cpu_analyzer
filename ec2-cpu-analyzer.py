@@ -73,7 +73,7 @@ cwatchclient = session.client('cloudwatch',region_name=region);
 def GetEc2():
 
 	csv = open(ec2_fileout, "w");
-	columnTitleRow = "Instance, Start_time, End_time, MaxCPU(%), MinCPU(%), AvgCPU(%), DataPointsSize, LowUsage EC2 count, Tags\n";
+	columnTitleRow = "Instance, Start_time, End_time, MaxCPU(%), MinCPU(%), AvgCPU(%), DataPointsSize, LowUsage EC2 count, Instance Type,Tags\n";
 	csv.write(columnTitleRow);
 	
 
