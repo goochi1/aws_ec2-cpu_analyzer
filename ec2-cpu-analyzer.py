@@ -60,8 +60,9 @@ end_time = now + timedelta(minutes=5);
 print "[]working on region: {0}".format(region);
 print "";
 
-ec2client = boto3.client('ec2',region_name=region);
-cwatchclient = boto3.client('cloudwatch',region_name=region);
+session = boto3.Session(profile_name='sandbox')
+ec2client = session.client('ec2',region_name=region);
+cwatchclient = session.client('cloudwatch',region_name=region);
 
 
 #---------------------------------------------------------------------------------------------------------
