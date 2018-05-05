@@ -5,3 +5,4 @@ pip-selfcheck.json
 include
 lib
 bin
+pip-selfcheck.json

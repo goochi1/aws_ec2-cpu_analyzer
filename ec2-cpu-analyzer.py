@@ -61,6 +61,7 @@ end_time = now + timedelta(minutes=5);
 print "[]working on region: {0}".format(region);
 print "";
 
+#useing profiles setup in AWS config
 session = boto3.Session(profile_name=profile)
 ec2client = session.client('ec2',region_name=region);
 cwatchclient = session.client('cloudwatch',region_name=region);
@@ -83,6 +84,7 @@ def GetEc2():
 	spinner = itertools.cycle(['-', '/', '|', '\\']);
 
 	for ec2 in ec2client.describe_instances(DryRun=dry_run)['Reservations']:
+		
 		#row =[];
 	 	#print(ec2);
 		
@@ -93,8 +95,11 @@ def GetEc2():
 		if ec2['Instances']:
 			instance=ec2['Instances'];
 			reser_id=ec2['ReservationId'];
+
 			for i in instance:	
-		  		
+		  		instace_type=i['InstanceType'];
+				print instace_type
+				raise
 		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 		  		
 
