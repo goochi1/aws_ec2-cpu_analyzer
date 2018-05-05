@@ -98,14 +98,12 @@ def GetEc2():
 
 			for i in instance:	
 		  		instace_type=i['InstanceType'];
-				print instace_type
-				raise
 		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 		  		
 
 		  		#Getting clouldwatch details 
 		  		csv_arr = GetCpu(i['InstanceId']);
-
+				csv_arr.append(instace_type);
 			  	if 'Tags' in i.keys():
 					Tag=i['Tags'];
 					if debug_run: print "Tags:- ",;
@@ -180,16 +178,6 @@ def GetCpu(ins):
 			
 			cpu_arr.append(datapoints['Maximum']);
 
-			#print cpu_arr;	
-			#print "-------------------------";
-			#print "Size:",    len(cpu_arr);
-			#sizec=len(cpu_arr);
-			#print "Min:",     min(cpu_arr);
-			#minc=min(cpu_arr);
-			#print "Max:",     max(cpu_arr);
-			#maxc=max(cpu_arr);
-			#print "Sum:",     sum(cpu_arr);
-
 		avgc = float(sum(cpu_arr))/len(cpu_arr) if len(cpu_arr) > 0 else float('nan');
 		if avgc < cpu_v:
 			total_ec2_cpu_thresh += 1;
@@ -202,8 +190,8 @@ def GetCpu(ins):
 		csv_arr.append(avgc);
 		csv_arr.append(len(cpu_arr));
 		csv_arr.append(total_ec2_cpu_thresh);
-		
 
+	
 	else:
 		if debug_run: print "Instance ID: "+insid+" doesn't have datapoints It's seems stopped." ;
 		csv_arr.append("Instance ID: "+insid+" doesn't have datapoints It's seems stopped.");
