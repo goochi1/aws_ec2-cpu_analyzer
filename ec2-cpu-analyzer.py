@@ -198,7 +198,11 @@ def GetCpu(ins):
 	else:
 		if debug_run: print "Instance ID: "+insid+" doesn't have datapoints It's seems stopped." ;
 		csv_arr.append("Instance ID: "+insid+" doesn't have datapoints It's seems stopped.");
-		
+		#added spaceing to print Instance type in right place
+		csv_arr.append("")
+		csv_arr.append("")
+		csv_arr.append("")
+		csv_arr.append("")
 
 	return csv_arr;
 #---------------------------------------------------------------------------------------------------------
