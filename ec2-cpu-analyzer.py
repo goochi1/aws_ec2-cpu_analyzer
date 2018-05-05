@@ -96,13 +96,16 @@ def GetEc2():
 			instance=ec2['Instances'];
 			reser_id=ec2['ReservationId'];
 
-			for i in instance:	
+			for i in instance:
+				#find instace size	
 		  		instace_type=i['InstanceType'];
+				
 		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 		  		
 
 		  		#Getting clouldwatch details 
 		  		csv_arr = GetCpu(i['InstanceId']);
+				#prints instace id
 				csv_arr.append(instace_type);
 			  	if 'Tags' in i.keys():
 					Tag=i['Tags'];
