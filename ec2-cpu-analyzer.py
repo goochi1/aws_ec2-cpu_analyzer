@@ -32,13 +32,14 @@ total_ec2_cpu_thresh = 0;
 cpu_v = 10; #threshold value
 daysTocheck = 3;
 
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
 	region = sys.argv[1];
+	profile = sys.argv[2];
 else:
 	print"--------------------------------------------------";
-	print "Please provide a region ";
+	print "Please provide a region and profile";
 	print __file__+" [region]";
-	print "eg:- >"+__file__+" us-west-1";
+	print "eg:- >"+__file__+" us-west-1 profile";
 	print"--------------------------------------------------";
 
 	sys.exit(1);
@@ -60,7 +61,7 @@ end_time = now + timedelta(minutes=5);
 print "[]working on region: {0}".format(region);
 print "";
 
-session = boto3.Session(profile_name='sandbox')
+session = boto3.Session(profile_name=profile)
 ec2client = session.client('ec2',region_name=region);
 cwatchclient = session.client('cloudwatch',region_name=region);
 
