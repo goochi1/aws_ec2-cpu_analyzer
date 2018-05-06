@@ -73,7 +73,7 @@ cwatchclient = session.client('cloudwatch',region_name=region);
 def GetEc2():
 
 	csv = open(ec2_fileout, "w");
-	columnTitleRow = "Instance, Start_time, End_time, MaxCPU(%), MinCPU(%), AvgCPU(%), DataPointsSize, LowUsage EC2 count, Instance Type,Tags\n";
+	columnTitleRow = "Instance, MaxCPU(%), MinCPU(%), AvgCPU(%), DataPointsSize, LowUsage EC2 count, Instance Type,Tags\n";
 	csv.write(columnTitleRow);
 	
 
@@ -103,7 +103,6 @@ def GetEc2():
 				
 		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 		  		
-
 		  		#Getting clouldwatch details 
 		  		csv_arr = GetCpu(i['InstanceId']);
 				#prints instace id
@@ -114,6 +113,7 @@ def GetEc2():
 					if debug_run: print "Tags:- ",;
 					
 					for j in Tag:
+						#just adds the EC2 name to the sheet
 						K = j['Key']
 						if K == 'Name':
 							#print j['Value'];
@@ -179,8 +179,8 @@ def GetCpu(ins):
 
 	#ading instance and time info
 	csv_arr.append(insid);
-	csv_arr.append(start_time);
-	csv_arr.append(end_time);
+	#csv_arr.append(start_time);
+	#csv_arr.append(end_time);
 
 	if cpu_avg['Datapoints']:
 		for datapoints in cpu_avg['Datapoints']:
@@ -203,10 +203,10 @@ def GetCpu(ins):
 	
 	else:
 		if debug_run: print "Instance ID: "+insid+" doesn't have datapoints It's seems stopped." ;
-		csv_arr.append("Instance ID: "+insid+" doesn't have datapoints It's seems stopped.");
+		csv_arr.append("stopped");
 		#added spaceing to print Instance type in right place
-		csv_arr.append("")
-		csv_arr.append("")
+		#csv_arr.append("")
+		#csv_arr.append("")
 		csv_arr.append("")
 		csv_arr.append("")
 
