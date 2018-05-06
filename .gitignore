@@ -1,0 +1,8 @@
+*.csv
+.tool-versions
+.DS_Store
+pip-selfcheck.json
+include
+lib
+bin
+pip-selfcheck.json

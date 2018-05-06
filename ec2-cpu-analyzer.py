@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 
 import boto3
@@ -30,15 +30,16 @@ sys.setdefaultencoding('utf8')
 
 total_ec2_cpu_thresh = 0;
 cpu_v = 10; #threshold value
-daysTocheck = 3;
+daysTocheck = 10;
 
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
 	region = sys.argv[1];
+	profile = sys.argv[2];
 else:
 	print"--------------------------------------------------";
-	print "Please provide a region ";
+	print "Please provide a region and profile";
 	print __file__+" [region]";
-	print "eg:- >"+__file__+" us-west-1";
+	print "eg:- >"+__file__+" us-west-1 profile";
 	print"--------------------------------------------------";
 
 	sys.exit(1);
@@ -60,8 +61,10 @@ end_time = now + timedelta(minutes=5);
 print "[]working on region: {0}".format(region);
 print "";
 
-ec2client = boto3.client('ec2',region_name=region);
-cwatchclient = boto3.client('cloudwatch',region_name=region);
+#useing profiles setup in AWS config
+session = boto3.Session(profile_name=profile)
+ec2client = session.client('ec2',region_name=region);
+cwatchclient = session.client('cloudwatch',region_name=region);
 
 
 #---------------------------------------------------------------------------------------------------------
@@ -70,7 +73,7 @@ cwatchclient = boto3.client('cloudwatch',region_name=region);
 def GetEc2():
 
 	csv = open(ec2_fileout, "w");
-	columnTitleRow = "Instance, Start_time, End_time, MaxCPU(%), MinCPU(%), AvgCPU(%), DataPointsSize, LowUsage EC2 count, Tags\n";
+	columnTitleRow = "Instance, MaxCPU(%), MinCPU(%), AvgCPU(%), DataPointsSize, LowUsage EC2 count, Instance Type,Tags\n";
 	csv.write(columnTitleRow);
 	
 
@@ -81,6 +84,7 @@ def GetEc2():
 	spinner = itertools.cycle(['-', '/', '|', '\\']);
 
 	for ec2 in ec2client.describe_instances(DryRun=dry_run)['Reservations']:
+		
 		#row =[];
 	 	#print(ec2);
 		
@@ -91,21 +95,31 @@ def GetEc2():
 		if ec2['Instances']:
 			instance=ec2['Instances'];
 			reser_id=ec2['ReservationId'];
-			for i in instance:	
-		  		
+			#print instance
+			#raise
+			for i in instance:
+				#find instace size	
+		  		instace_type=i['InstanceType'];
+				
 		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 		  		
-
 		  		#Getting clouldwatch details 
 		  		csv_arr = GetCpu(i['InstanceId']);
-
+				#prints instace id
+				csv_arr.append(instace_type);
 			  	if 'Tags' in i.keys():
 					Tag=i['Tags'];
+					
 					if debug_run: print "Tags:- ",;
 					
-					for j in Tag:	
-			  			if debug_run: print j['Key'] + " : "+ j['Value'],;
-			  			csv_arr.append(j['Key'] + " : "+ j['Value']);
+					for j in Tag:
+						#just adds the EC2 name to the sheet
+						K = j['Key']
+						if K == 'Name':
+							#print j['Value'];
+			  				#if debug_run: print j['Key'] + " : "+ j['Value'],;
+						
+			  				csv_arr.append(j['Key'] + " : "+ j['Value']);
 			  			if debug_run: print ",",;	
 				else:
 			  		if debug_run: print "[This Instance doesn't have tags]";
@@ -165,23 +179,13 @@ def GetCpu(ins):
 
 	#ading instance and time info
 	csv_arr.append(insid);
-	csv_arr.append(start_time);
-	csv_arr.append(end_time);
+	#csv_arr.append(start_time);
+	#csv_arr.append(end_time);
 
 	if cpu_avg['Datapoints']:
 		for datapoints in cpu_avg['Datapoints']:
 			
 			cpu_arr.append(datapoints['Maximum']);
-
-			#print cpu_arr;	
-			#print "-------------------------";
-			#print "Size:",    len(cpu_arr);
-			#sizec=len(cpu_arr);
-			#print "Min:",     min(cpu_arr);
-			#minc=min(cpu_arr);
-			#print "Max:",     max(cpu_arr);
-			#maxc=max(cpu_arr);
-			#print "Sum:",     sum(cpu_arr);
 
 		avgc = float(sum(cpu_arr))/len(cpu_arr) if len(cpu_arr) > 0 else float('nan');
 		if avgc < cpu_v:
@@ -195,12 +199,16 @@ def GetCpu(ins):
 		csv_arr.append(avgc);
 		csv_arr.append(len(cpu_arr));
 		csv_arr.append(total_ec2_cpu_thresh);
-		
 
+	
 	else:
 		if debug_run: print "Instance ID: "+insid+" doesn't have datapoints It's seems stopped." ;
-		csv_arr.append("Instance ID: "+insid+" doesn't have datapoints It's seems stopped.");
-		
+		csv_arr.append("stopped");
+		#added spaceing to print Instance type in right place
+		#csv_arr.append("")
+		#csv_arr.append("")
+		csv_arr.append("")
+		csv_arr.append("")
 
 	return csv_arr;
 #---------------------------------------------------------------------------------------------------------
