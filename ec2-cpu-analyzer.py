@@ -30,7 +30,7 @@ sys.setdefaultencoding('utf8')
 
 total_ec2_cpu_thresh = 0;
 cpu_v = 10; #threshold value
-daysTocheck = 3;
+daysTocheck = 10;
 
 if len(sys.argv) == 3:
 	region = sys.argv[1];
@@ -95,7 +95,8 @@ def GetEc2():
 		if ec2['Instances']:
 			instance=ec2['Instances'];
 			reser_id=ec2['ReservationId'];
-
+			#print instance
+			#raise
 			for i in instance:
 				#find instace size	
 		  		instace_type=i['InstanceType'];
@@ -109,10 +110,17 @@ def GetEc2():
 				csv_arr.append(instace_type);
 			  	if 'Tags' in i.keys():
 					Tag=i['Tags'];
+					
 					if debug_run: print "Tags:- ",;
 					
-					for j in Tag:	
+					for j in Tag:
+						K = j['Key']
+						if K == 'Name':
+							print j['Value'];
+
+							raise
 			  			if debug_run: print j['Key'] + " : "+ j['Value'],;
+						
 			  			csv_arr.append(j['Key'] + " : "+ j['Value']);
 			  			if debug_run: print ",",;	
 				else:
