@@ -116,12 +116,10 @@ def GetEc2():
 					for j in Tag:
 						K = j['Key']
 						if K == 'Name':
-							print j['Value'];
-
-							raise
-			  			if debug_run: print j['Key'] + " : "+ j['Value'],;
+							#print j['Value'];
+			  				#if debug_run: print j['Key'] + " : "+ j['Value'],;
 						
-			  			csv_arr.append(j['Key'] + " : "+ j['Value']);
+			  				csv_arr.append(j['Key'] + " : "+ j['Value']);
 			  			if debug_run: print ",",;	
 				else:
 			  		if debug_run: print "[This Instance doesn't have tags]";
