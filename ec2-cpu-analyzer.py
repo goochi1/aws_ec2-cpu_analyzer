@@ -31,7 +31,7 @@ sys.setdefaultencoding('utf8')
 total_ec2_cpu_thresh = 0;
 cpu_v = 10; #threshold value
 daysTocheck = 10;
-stopped = 'no';
+instace_type = '';
 if len(sys.argv) == 3:
 	region = sys.argv[1];
 	profile = sys.argv[2];
@@ -95,37 +95,38 @@ def GetEc2():
 		if ec2['Instances']:
 			instance=ec2['Instances'];
 			reser_id=ec2['ReservationId'];
-			#print instance
-			#raise
+			
 			for i in instance:
 				#find instace size	
 		  		instace_type=i['InstanceType'];
+				state=i['State'];
+				print state
+				raise
 				
 		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 		  		
 		  		#Getting clouldwatch details 
 		  		csv_arr = GetCpu(i['InstanceId']);
-				if stopped=='no':
+			
+				#prints instace type
+				#csv_arr.append(instace_type);
+				if 'Tags' in i.keys():
+					Tag=i['Tags'];
 					
-					#prints instace id
-					csv_arr.append(instace_type);
-					if 'Tags' in i.keys():
-						Tag=i['Tags'];
+					if debug_run: print "Tags:- ",;
+					
+					for j in Tag:
+						#just adds the EC2 name to the sheet
+						K = j['Key']
+						if K == 'Name':
+							#print j['Value'];
+							#if debug_run: print j['Key'] + " : "+ j['Value'],;
 						
-						if debug_run: print "Tags:- ",;
-						
-						for j in Tag:
-							#just adds the EC2 name to the sheet
-							K = j['Key']
-							if K == 'Name':
-								#print j['Value'];
-								#if debug_run: print j['Key'] + " : "+ j['Value'],;
-							
-								csv_arr.append(j['Key'] + " : "+ j['Value']);
-							if debug_run: print ",",;	
-					else:
-						if debug_run: print "[This Instance doesn't have tags]";
-						csv_arr.append("[This Instance doesn't have tags]");
+							csv_arr.append(j['Key'] + " : "+ j['Value']);
+						if debug_run: print ",",;	
+				else:
+					if debug_run: print "[This Instance doesn't have tags]";
+					csv_arr.append("[This Instance doesn't have tags]");
 
 		else:
 		  	print "[This Reservations not attached to any instance]";
@@ -201,19 +202,20 @@ def GetCpu(ins):
 		csv_arr.append(avgc);
 		csv_arr.append(len(cpu_arr));
 		csv_arr.append(total_ec2_cpu_thresh);
-
+		csv_arr.append(instace_type);
 	
 	else:
-		stopped=='yes'
-		'''
+		
+		
 		if debug_run: print "Instance ID: "+insid+" doesn't have datapoints It's seems stopped." ;
 		csv_arr.append("stopped");
+
 		#added spaceing to print Instance type in right place
 		#csv_arr.append("")
 		#csv_arr.append("")
 		csv_arr.append("")
 		csv_arr.append("")
-		'''
+		
 	return csv_arr;
 #---------------------------------------------------------------------------------------------------------
 GetEc2();
