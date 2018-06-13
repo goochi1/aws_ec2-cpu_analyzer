@@ -101,7 +101,7 @@ def GetEc2():
 		  		instace_type=i['InstanceType'];
 				state=i['State'];
 				print state
-				raise
+				
 				
 		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 		  		

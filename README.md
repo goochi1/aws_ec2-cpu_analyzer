@@ -52,3 +52,7 @@ The tool will generate a report [Region]_ec2-cpu_usage[timestamp].csv with Insta
 ```
 
 ![alt text](https://github.com/charithd/aws_ec2-cpu_analyzer/blob/master/cpu-rep.png)
+
+ 514  chmod +x ec2-cpu-analyzer.py
+  515  ~/play/virtualenv-15.1.0/virtualenv.py .
+  516  . bin/activate
