@@ -99,34 +99,36 @@ def GetEc2():
 			for i in instance:
 				#find instace size	
 		  		instace_type=i['InstanceType'];
-				state=i['State'];
-				print state
-				
-				
-		  		if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
-		  		
-		  		#Getting clouldwatch details 
-		  		csv_arr = GetCpu(i['InstanceId']);
-			
-				#prints instace type
-				#csv_arr.append(instace_type);
-				if 'Tags' in i.keys():
-					Tag=i['Tags'];
+				state=i['State']['Name'];
+				print(state)
+				if state == '-running':
+
+					if debug_run: print "|"+reser_id+" : "+i['InstanceId'] + " : "+ i['InstanceType'] +" : "+ str(i['LaunchTime'])+" : "+str(i['State']),;
 					
-					if debug_run: print "Tags:- ",;
-					
-					for j in Tag:
-						#just adds the EC2 name to the sheet
-						K = j['Key']
-						if K == 'Name':
-							#print j['Value'];
-							#if debug_run: print j['Key'] + " : "+ j['Value'],;
+					#Getting clouldwatch details 
+					csv_arr = GetCpu(i['InstanceId']);
+				
+					#prints instace type
+					#csv_arr.append(instace_type);
+					if 'Tags' in i.keys():
+						Tag=i['Tags'];
 						
-							csv_arr.append(j['Key'] + " : "+ j['Value']);
-						if debug_run: print ",",;	
+						if debug_run: print "Tags:- ",;
+						
+						for j in Tag:
+							#just adds the EC2 name to the sheet
+							K = j['Key']
+							if K == 'Name':
+								#print j['Value'];
+								#if debug_run: print j['Key'] + " : "+ j['Value'],;
+							
+								csv_arr.append(j['Key'] + " : "+ j['Value']);
+							if debug_run: print ",",;	
+					else:
+						if debug_run: print "[This Instance doesn't have tags]";
+						csv_arr.append("[This Instance doesn't have tags]");
 				else:
-					if debug_run: print "[This Instance doesn't have tags]";
-					csv_arr.append("[This Instance doesn't have tags]");
+					break
 
 		else:
 		  	print "[This Reservations not attached to any instance]";
